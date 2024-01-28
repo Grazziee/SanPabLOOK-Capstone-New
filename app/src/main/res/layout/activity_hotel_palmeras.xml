@@ -231,6 +231,7 @@
                     android:layout_height="200sp"
                     android:layout_marginTop="10dp"
                     android:padding="10sp"
+                    android:scaleType="centerCrop"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/stayHost"
@@ -657,7 +658,6 @@
                     android:layout_marginTop="0sp"
                     android:layout_marginBottom="25sp"
                     android:scrollbarThumbHorizontal="@null"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -665,88 +665,39 @@
                     app:layout_constraintVertical_bias="0.0">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:id="@+id/linearReviews"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="15sp">
+                        android:layout_marginTop="25dp"
+                        android:orientation="horizontal">
 
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="235sp"
-                            android:layout_height="110sp"
-                            android:layout_marginLeft="20sp"
-                            android:layout_marginTop="18sp"
-                            android:layout_marginRight="10sp"
-                            android:layout_marginBottom="10sp"
-                            android:background="@color/white"
-                            app:cardCornerRadius="15sp">
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewHotelReviewsPalmeras"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/review1"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="top"
-                                android:layout_margin="10sp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:justificationMode="inter_word"
-                                android:padding="10sp"
-                                android:text="@string/casaReview1"
-                                android:textColor="#141414"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/seeMore1"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/poppins_bold"
-                                android:paddingLeft="10sp"
-                                android:text="@string/showmore"
-                                android:textColor="#141414"
-                                android:textSize="12sp" />
-
-                        </androidx.cardview.widget.CardView>
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="235sp"
-                            android:layout_height="110sp"
-                            android:layout_marginLeft="20sp"
-                            android:layout_marginTop="18sp"
-                            android:layout_marginRight="10sp"
-                            android:layout_marginBottom="10sp"
-                            android:background="@color/white"
-                            app:cardCornerRadius="15sp">
-
-                            <TextView
-                                android:id="@+id/review2"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="top"
-                                android:layout_margin="10sp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:justificationMode="inter_word"
-                                android:padding="10sp"
-                                android:text="@string/casaReview2"
-                                android:textColor="#141414"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/seeMore2"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/poppins_bold"
-                                android:paddingLeft="10sp"
-                                android:text="@string/showmore"
-                                android:textColor="#141414"
-                                android:textSize="12sp" />
-
-                        </androidx.cardview.widget.CardView>
-
-
+                        </androidx.recyclerview.widget.RecyclerView>
                     </LinearLayout>
-
                 </HorizontalScrollView>
+
+                <Button
+                    android:id="@+id/buttonViewAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/poppins_regular"
+                    android:letterSpacing="0"
+                    android:padding="10dp"
+                    android:text="@string/labelViewAllReviews"
+                    android:textAllCaps="false"
+                    android:textColor="@color/darkBlue"
+                    android:textSize="15sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/horizontalReviews"/>
 
                 <View
                     android:id="@+id/line6"
@@ -756,7 +707,7 @@
                     android:background="@android:color/darker_gray"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/horizontalReviews" />
+                    app:layout_constraintTop_toBottomOf="@+id/buttonViewAll" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -944,34 +895,42 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/firstLayout">
 
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/middleGuideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
             <TextView
                 android:id="@+id/stayPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10sp"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="20sp"
                 android:fontFamily="@font/poppins_bold"
                 android:text="₱ 3,864 / night"
                 android:textColor="#000000"
                 android:textSize="20dp"
                 app:layout_constraintEnd_toStartOf="@+id/reserveNowBtn1"
-                app:layout_constraintHorizontal_bias="0.285"
+                app:layout_constraintHorizontal_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <Button
                 android:id="@+id/reserveNowBtn1"
-                android:layout_width="177dp"
+                android:layout_width="140dp"
                 android:layout_height="40dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginRight="10sp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
                 android:background="@drawable/btn_hotel_bg"
                 android:fontFamily="@font/poppins_bold"
                 android:text="@string/booknow"
                 app:backgroundTint="@color/stayButton"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintStart_toEndOf="@id/stayPrice"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

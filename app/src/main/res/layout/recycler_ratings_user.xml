@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageRatings"
+        android:layout_width="130dp"
+        android:layout_height="200dp"
+        android:padding="5dp"
+        android:background="@color/transparent"
+        android:clickable="true"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/ratings_rounded"
+        app:srcCompat="@drawable/sampaloc_lake"
+        app:strokeColor="@color/blue"
+        app:strokeWidth="5dp"/>
+
+    <TextView
+        android:id="@+id/reviewDestination"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/imageRatings"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_semi_bold"
+        android:maxLines="2"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="@string/destinationName1"
+        android:textColor="@color/darkBlue"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/reviewContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/reviewDestination"
+        android:layout_toEndOf="@id/imageRatings"
+        android:ellipsize="end"
+        android:fontFamily="@font/poppins_regular"
+        android:justificationMode="inter_word"
+        android:maxLines="8"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="@string/review1"
+        android:textSize="12sp"
+        android:textColor="@color/lighterBlack"/>
+</RelativeLayout>

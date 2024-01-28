@@ -8,6 +8,8 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,20 +32,33 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.study.sanpablook.R;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import sanpablook.study.sanpablook.Adapter.RecyclerCardRatings;
+
 public class ProfileFragment extends Fragment {
+
+    //recycler view horizontal
+    RecyclerView recyclerViewCardRatings;
+    LinearLayoutManager linearLayoutManager;
 
     //Activity History
     Button btnViewAll;
-    ImageButton btnImage1, btnImage2, btnImage3, btnSettings;
+    ImageButton btnSettings;
 
     //Profile
     TextView userBio, userFirstName;
     ImageView profilePicture;
 
     //Bookings badge count
-    ImageButton btnPending, btnConfirmed, btnCancelled, btnRatings;
+    ImageButton btnPending, btnConfirmed, btnCancelled;
     TextView badgePendingCount, badgeConfirmedCount, badgeCancelledCount, badgeRatingCount;
-    int intBadgePendingCount = 2, intBadgeConfirmedCount = 1, intBadgeCancelledCount = 1, intBadgeRatingsCount = 7;
+    int intBadgePendingCount = 0, intBadgeConfirmedCount = 0, intBadgeCancelledCount = 0, intBadgeRatingsCount = 0;
+
+    private List<String> items = new ArrayList<>();
 
     //Firebase
     FirebaseUser user;
@@ -51,6 +66,8 @@ public class ProfileFragment extends Fragment {
     FirebaseFirestore fStore;
     StorageReference storage;
     String userID;
+
+    private RecyclerCardRatings adapter;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +110,36 @@ public class ProfileFragment extends Fragment {
                 Log.d(TAG, "get failed with ", task.getException());
             }
         });
+
+        // Check the count of pending bookings for this user
+        fStore.collection("BookingPending").whereEqualTo("userID", userID).whereEqualTo("status", "Pending").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                intBadgePendingCount = task.getResult().size();
+                setupPendingBadge();
+            } else {
+                Log.d(TAG, "Failed to fetch user data");
+            }
+        });
+
+        // Check the count of confirmed bookings for this user
+        fStore.collection("BookingPending").whereEqualTo("userID", userID).whereEqualTo("status", "Confirmed").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                intBadgeConfirmedCount = task.getResult().size();
+                setupConfirmedBadge();
+            } else {
+                Log.d(TAG, "Failed to fetch user data");
+            }
+        });
+
+        // Check the count of cancelled bookings for this user
+        fStore.collection("BookingPending").whereEqualTo("userID", userID).whereEqualTo("status", "Cancelled").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                intBadgeCancelledCount = task.getResult().size();
+                setupCancelledBadge();
+            } else {
+                Log.d(TAG, "Failed to fetch user data");
+            }
+        });
     }
 
     @Override
@@ -100,6 +147,12 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        //recycler view horizontal
+        recyclerViewCardRatings = view.findViewById(R.id.recyclerViewCardRatings);
+        recyclerViewCardRatings.setLayoutManager(new LinearLayoutManager(requireContext()));
+        linearLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewCardRatings.setLayoutManager(linearLayoutManager);
 
         //Objects
         userFirstName = view.findViewById(R.id.userFirstName);
@@ -115,26 +168,21 @@ public class ProfileFragment extends Fragment {
         //buttons
         btnSettings = view.findViewById(R.id.buttonSettings);
         btnViewAll = view.findViewById(R.id.buttonViewAll);
-        btnImage1 = view.findViewById(R.id.image1);
-        btnImage2 = view.findViewById(R.id.image2);
-        btnImage3 = view.findViewById(R.id.image3);
 
         //bookings
         btnPending = view.findViewById(R.id.buttonPending);
         btnConfirmed = view.findViewById(R.id.buttonConfirmed);
         btnCancelled = view.findViewById(R.id.buttonCancelled);
-        btnRatings = view.findViewById(R.id.buttonRatings);
 
         //bookings notification badge
         badgePendingCount = view.findViewById(R.id.badgePending);
         badgeConfirmedCount = view.findViewById(R.id.badgeConfirmed);
         badgeCancelledCount = view.findViewById(R.id.badgeCancelled);
-        badgeRatingCount = view.findViewById(R.id.badgeRatings);
 
         //Check if user is not signed in
         if (user != null) {
             //Check the count of pending bookings for this user
-            fStore.collection("BookingPending").whereEqualTo("userID", userID).get().addOnCompleteListener(task -> {
+            fStore.collection("BookingPending").whereEqualTo("userID", userID).whereEqualTo("status", "Pending").get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     intBadgePendingCount = task.getResult().size();
                     setupPendingBadge();
@@ -142,9 +190,26 @@ public class ProfileFragment extends Fragment {
                     Log.d(TAG, "Failed to fetch user data");
                 }
             });
+            //Check count for cancelled bookings for this user
+            fStore.collection("BookingPending").whereEqualTo("userID", userID).whereEqualTo("status", "Cancelled").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    intBadgeCancelledCount = task.getResult().size();
+                    setupCancelledBadge();
+                } else {
+                    Log.d(TAG, "Failed to fetch user data");
+                }
+            });
+            // Check the count of confirmed bookings for this user
+            fStore.collection("BookingPending").whereEqualTo("userID", userID).whereEqualTo("status", "Confirmed").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    intBadgeConfirmedCount = task.getResult().size();
+                    setupConfirmedBadge();
+                } else {
+                    Log.d(TAG, "Failed to fetch user data");
+                }
+            });
             setupConfirmedBadge();
             setupCancelledBadge();
-            setupRatingsBadge();
         } else {
             //User is not signed in
             Intent intent = new Intent(requireContext(), SignInActivity.class);
@@ -191,10 +256,12 @@ public class ProfileFragment extends Fragment {
         profilePicRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(ProfileFragment.this)
-                        .load(uri)
-                        .into(profilePicture);
-                                                                }
+                if (isAdded() && getActivity() != null) {
+                    Glide.with(getActivity())
+                            .load(uri)
+                            .into(profilePicture);
+                }
+            }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(Exception e) {
@@ -202,6 +269,24 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        fStore.collection("UserReview").whereEqualTo("userID", userID).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot document : task.getResult()) {
+                    String imageUrl = document.getString("imageUrl");
+
+                    // Add the imageUrl to the items list
+                    items.add(imageUrl);
+                }
+                // Initialize the adapter
+                adapter = new RecyclerCardRatings(getActivity(), items);
+                recyclerViewCardRatings.setAdapter(adapter);
+
+                // Notify the adapter that the data set has changed
+                adapter.notifyDataSetChanged();
+            } else {
+                Log.d(TAG, "Failed to fetch user data");
+            }
+        });
 
         //for settings button
         btnSettings.setOnClickListener(new View.OnClickListener() {
@@ -219,25 +304,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        //for card view in profile fragment
-        btnImage1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivityRatings(view);
-            }
-        });
-        btnImage2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivityRatings(view);
-            }
-        });
-        btnImage3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToActivityRatings(view);
-            }
-        });
 
         //bookings pages
         btnPending.setOnClickListener(new View.OnClickListener() {
@@ -258,25 +324,18 @@ public class ProfileFragment extends Fragment {
                 goToCancelled(view);
             }
         });
-        btnRatings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                goToRatings(view);
-            }
-        });
 
         return view;
     }
 
 
-    //onclick of activity history cards
-    private void goToActivityRatings(View view) {
-        Intent intent = new Intent(getActivity(), ActivityRatings.class);
+    private void goToSettings(View view) {
+        Intent intent = new Intent(getActivity(), UserSettings.class);
         startActivity(intent);
     }
 
-    private void goToSettings(View view) {
-        Intent intent = new Intent(getActivity(), UserSettings.class);
+    private void goToActivityRatings(View view) {
+        Intent intent = new Intent(getActivity(), ActivityRatings.class);
         startActivity(intent);
     }
 
@@ -292,11 +351,6 @@ public class ProfileFragment extends Fragment {
 
     private void goToCancelled(View view) {
         Intent intent = new Intent(getActivity(), BookingsCancelledActivity.class);
-        startActivity(intent);
-    }
-
-    private void goToRatings(View view) {
-        Intent intent = new Intent(getActivity(), BookingsCompletedActivity.class);
         startActivity(intent);
     }
 
@@ -339,20 +393,6 @@ public class ProfileFragment extends Fragment {
                 badgeCancelledCount.setText(String.valueOf(Math.min(intBadgeCancelledCount, 99)));
                 if (badgeCancelledCount.getVisibility() != View.VISIBLE) {
                     badgeCancelledCount.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-    }
-    private void setupRatingsBadge() {
-        if (badgeRatingCount != null) {
-            if (intBadgeRatingsCount == 0) {
-                if (badgeRatingCount.getVisibility() != View.GONE) {
-                    badgeRatingCount.setVisibility(View.GONE);
-                }
-            } else {
-                badgeRatingCount.setText(String.valueOf(Math.min(intBadgeRatingsCount, 99)));
-                if (badgeRatingCount.getVisibility() != View.VISIBLE) {
-                    badgeRatingCount.setVisibility(View.VISIBLE);
                 }
             }
         }

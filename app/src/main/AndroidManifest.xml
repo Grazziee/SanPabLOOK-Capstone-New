@@ -15,20 +15,20 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo_sanpablook_foreground"
         android:label="@string/appName"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_sanpablook"
         android:supportsRtl="true"
         android:theme="@style/Theme.Capstone"
         tools:targetApi="31">
-        <activity
-            android:name=".ConfirmedBookingActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBi4Y0iwY7WoSsDXb8BMfioHIjzZSqtPy8" />
 
+        <activity android:name="sanpablook.study.sanpablook.BunotLakePage" />
+        <activity android:name="sanpablook.study.sanpablook.YamboLakePage" />
+        <activity android:name="sanpablook.study.sanpablook.ConfirmedBookingActivity" />
         <activity android:name="sanpablook.study.sanpablook.SanPablookActivities" />
         <activity android:name="sanpablook.study.sanpablook.MohicapLakePage" />
         <activity android:name="sanpablook.study.sanpablook.FishingPage" />
@@ -62,7 +62,7 @@
         <activity android:name="sanpablook.study.sanpablook.BikeRentalPage" />
         <activity android:name="sanpablook.study.sanpablook.ForgotPassword" />
         <activity android:name="sanpablook.study.sanpablook.HotelPalmeras" />
-        <activity android:name="sanpablook.study.sanpablook.YamboPandinLakePage" />
+        <activity android:name="sanpablook.study.sanpablook.PandinLakePage" />
         <activity android:name="sanpablook.study.sanpablook.HotelCasa" />
         <activity android:name="sanpablook.study.sanpablook.CalibatoLakePage" />
         <activity android:name="sanpablook.study.sanpablook.PalakpakinLakePage" />
@@ -81,6 +81,8 @@
         <activity android:name="sanpablook.study.sanpablook.UserSettings" />
         <activity android:name="sanpablook.study.sanpablook.SignUpActivity" />
         <activity android:name="sanpablook.study.sanpablook.HomeActivity" />
+        <activity android:name="sanpablook.study.sanpablook.ViewAllRatingsDine" />
+        <activity android:name="sanpablook.study.sanpablook.ViewAllRatingsHotel" />
         <activity android:name="sanpablook.study.sanpablook.testMain" />
         <activity
             android:name="sanpablook.study.sanpablook.SignInActivity"
